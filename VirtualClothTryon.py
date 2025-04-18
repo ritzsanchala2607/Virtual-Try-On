@@ -227,7 +227,10 @@ if uploaded_file is not None:
         with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_file:
             cloth_image.save(temp_file.name)
             st.session_state.cloth_image_path = temp_file.name
-        st.image(cloth_image, caption="Uploaded Clothing Item", use_container_width=True)
+        try:
+            st.image(cloth_image, caption="Uploaded Clothing Item", use_container_width=True)
+        except TypeError:
+            st.image(cloth_image, caption="Uploaded Clothing Item")
         st.markdown('<div class="success-box">✅ Clothing image successfully uploaded! You can now start the virtual try-on.</div>', unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Error processing image: {str(e)}")
@@ -267,7 +270,10 @@ if st.session_state.webcam_running and st.session_state.cloth_image_path:
                 upper_green = np.array([upper_h, upper_s, upper_v])
                 processed_frame = virtual_tryon(frame, st.session_state.cloth_image_path, lower_green, upper_green, min_area)
                 st.session_state.latest_frame = processed_frame
-                webcam_placeholder.image(processed_frame, channels="RGB", use_container_width=True, caption="Virtual Try-on Preview")
+                try:
+                    webcam_placeholder.image(processed_frame, channels="RGB", use_container_width=True, caption="Virtual Try-on Preview")
+                except TypeError:
+                    webcam_placeholder.image(processed_frame, channels="RGB", caption="Virtual Try-on Preview")
                 time.sleep(0.05)
                 if not st.session_state.webcam_running:
                     break
@@ -279,7 +285,10 @@ if st.session_state.webcam_running and st.session_state.cloth_image_path:
 if st.session_state.captured_image is not None and st.session_state.captured_image_bytes is not None:
     st.markdown('<div class="captured-image">', unsafe_allow_html=True)
     st.markdown('<div class="instruction-title">📷 Captured Image</div>', unsafe_allow_html=True)
-    st.image(st.session_state.captured_image, use_container_width=True, caption="Your Virtual Try-on")
+    try:
+        st.image(st.session_state.captured_image, use_container_width=True, caption="Your Virtual Try-on")
+    except TypeError:
+        st.image(st.session_state.captured_image, caption="Your Virtual Try-on")
     
     # Create download button using bytes
     btn = st.download_button(
